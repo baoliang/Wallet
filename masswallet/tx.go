@@ -73,7 +73,7 @@ func (w *WalletManager) constructTxIn(Inputs []*TxIn, LockTime uint64) (*wire.Ms
 		}
 		if err != nil {
 			logging.CPrint(logging.ERROR, "check prev tx failed", logging.LogFormat{"err": err})
-			return nil, ErrInvalidParameter
+			//return nil, ErrInvalidParameter
 		}
 
 		txOut := mtx.TxOut[txIn.PreviousOutPoint.Index]
