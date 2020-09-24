@@ -72,7 +72,7 @@ func (w *WalletManager) constructTxIn(Inputs []*TxIn, LockTime uint64) (*wire.Ms
 			mtx, err = w.existsUnminedTx(&txIn.PreviousOutPoint.Hash)
 		}
 		if err != nil {
-			logging.CPrint(logging.ERROR, "check prev tx failed", logging.LogFormat{"err": err})
+			//logging.CPrint(logging.ERROR, "check prev tx failed", logging.LogFormat{"err": err})
 			//return nil, ErrInvalidParameter
 		}
 
