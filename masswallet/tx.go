@@ -66,7 +66,8 @@ func (w *WalletManager) constructTxIn(Inputs []*TxIn, LockTime uint64) (*wire.Ms
 		if LockTime != 0 {
 			txIn.Sequence = wire.MaxTxInSequenceNum - 1
 		}
-		mtx, err := w.existsMsgTx(&txIn.PreviousOutPoint)
+		//mtx, err := w.existsMsgTx(&txIn.PreviousOutPoint)
+		mtx := wire.MsgTx{};
 		//if err == txmgr.ErrNotFound {
 		//	logging.CPrint(logging.INFO, "mined prev tx not found, check unmined tx", logging.LogFormat{})
 		//	mtx, err = w.existsUnminedTx(&txIn.PreviousOutPoint.Hash)
