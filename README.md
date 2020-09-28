@@ -21,7 +21,7 @@ A wallet implementation of [MassNet](http://www.massnet.org/) in Golang.
   make build
   ```
 - Run `./bin/masswallet` to start.
-
+go build -o bin/masswallet-cli cmd/masswalletcli/main.go
 #### Windows
 
 - Clone source code to `$GOPATH/src/github.com/mass-community/MassNet-wallet`.

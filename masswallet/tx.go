@@ -48,6 +48,59 @@ type BindingOutput struct {
 	Amount         massutil.Amount
 }
 
+
+
+func (w *WalletManager) constructTxInPublic(Inputs []*TxIn, LockTime uint64) (*wire.MsgTx, error) {
+	am := w.ksmgr.CurrentKeystore()
+	if am == nil {
+		return nil, ErrNoWalletInUse
+	}
+	mtxReturn := &wire.MsgTx{}
+	for _, input := range Inputs {
+		txHash, err := wire.NewHashFromStr(input.TxId)
+		if err != nil {
+			logging.CPrint(logging.ERROR, "exist err in constructTxin", logging.LogFormat{"err": err.Error()})
+			return nil, ErrShaHashFromStr
+		}
+
+		prevOut := wire.NewOutPoint(txHash, input.Vout)
+		txIn := wire.NewTxIn(prevOut, nil)
+		if LockTime != 0 {
+			txIn.Sequence = wire.MaxTxInSequenceNum - 1
+		}
+
+
+		//mtx, err := w.existsMsgTx(&txIn.PreviousOutPoint)
+		//
+		//
+		//if err != nil {
+		//	logging.CPrint(logging.ERROR, "check prev tx failed", logging.LogFormat{"err": err})
+		//	return nil, ErrInvalidParameter
+		//}
+		//
+		//txOut := mtx.TxOut[txIn.PreviousOutPoint.Index]
+		//pks, err := utils.ParsePkScript(txOut.PkScript, w.chainParams)
+		//if err != nil {
+		//	logging.CPrint(logging.ERROR, "ParsePkScript error",
+		//		logging.LogFormat{
+		//			"err": err,
+		//		})
+		//	return nil, ErrInvalidParameter
+		//}
+		//_, err = am.Address(pks.StdEncodeAddress())
+		//if err != nil {
+		//	return nil, ErrNoAddressInWallet
+		//}
+		//if pks.IsStaking() {
+		//	txIn.Sequence = pks.Maturity()
+		//}
+
+		mtxReturn.AddTxIn(txIn)
+	}
+	return mtxReturn, nil
+}
+
+
 func (w *WalletManager) constructTxIn(Inputs []*TxIn, LockTime uint64) (*wire.MsgTx, error) {
 	am := w.ksmgr.CurrentKeystore()
 	if am == nil {
@@ -66,7 +119,10 @@ func (w *WalletManager) constructTxIn(Inputs []*TxIn, LockTime uint64) (*wire.Ms
 		if LockTime != 0 {
 			txIn.Sequence = wire.MaxTxInSequenceNum - 1
 		}
+
+
 		mtx, err := w.existsMsgTx(&txIn.PreviousOutPoint)
+
 
 		if err == txmgr.ErrNotFound {
 			logging.CPrint(logging.INFO, "mined prev tx not found, check unmined tx", logging.LogFormat{})

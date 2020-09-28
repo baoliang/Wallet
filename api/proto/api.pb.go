@@ -1189,6 +1189,8 @@ type CreateRawTransactionRequest struct {
 	Inputs   []*TransactionInput `protobuf:"bytes,1,rep,name=inputs" json:"inputs,omitempty"`
 	Amounts  map[string]string   `protobuf:"bytes,2,rep,name=amounts" json:"amounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	LockTime uint64              `protobuf:"varint,3,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
+	Public   bool                `protobuf:"varint,4,opt,name=public,json=lockTime,proto3" json:"public,omitempty"`
+
 }
 
 func (m *CreateRawTransactionRequest) Reset()                    { *m = CreateRawTransactionRequest{} }

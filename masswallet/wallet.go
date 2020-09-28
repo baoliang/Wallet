@@ -875,10 +875,16 @@ func (w *WalletManager) GetAddresses(addressClass uint16) ([]*txmgr.AddressDetai
 	return result, nil
 }
 
-func (w *WalletManager) CreateRawTransaction(Inputs []*TxIn, Outputs map[string]massutil.Amount, lockTime uint64) (string, error) {
+func (w *WalletManager) CreateRawTransaction(Inputs []*TxIn, Outputs map[string]massutil.Amount, lockTime uint64, public bool) (string, error) {
 	// Add all transaction inputs to a new transaction after performing
 	// some validity checks.
-	mtx, err := w.constructTxIn(Inputs, lockTime)
+	var mtx *wire.MsgTx;
+	var err error;
+	if(public) {
+		mtx, err = w.constructTxInPublic(Inputs, lockTime)
+	} else {
+		mtx, err = w.constructTxIn(Inputs, lockTime)
+	}
 	if err != nil {
 		logging.CPrint(logging.ERROR, "Failed to constructTxIn", logging.LogFormat{
 			"err": err,
