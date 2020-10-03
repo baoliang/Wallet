@@ -582,7 +582,7 @@ func (a *AddrManager) getPrivKeyBtcec(addr string, password []byte) (*btcec.Priv
 	// get address index
 	mAddr, ok := a.addrs[addr]
 	if !ok {
-		logging.CPrint(logging.ERROR, "address not found in address manager", logging.LogFormat{"address": addr})
+		logging.CPrint(logging.ERROR, "address not found inbtcec.PrivateKey address manager", logging.LogFormat{"address": addr})
 		return nil, ErrAddressNotFound
 	}
 	internal := mAddr.derivationPath.Branch == InternalBranch

@@ -1165,6 +1165,11 @@ type TransactionInput struct {
 	TxId string `protobuf:"bytes,1,opt,name=tx_id,json=txId,proto3" json:"tx_id,omitempty"`
 	Vout uint32 `protobuf:"varint,2,opt,name=vout,proto3" json:"vout,omitempty"`
 }
+type TransactionOutput struct {
+	Value    int64`protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	PkScript string `protobuf:"bytes,2,opt,name=pkscript,json=pkscript,proto3" json:"pkscript,omitempty"`
+
+}
 
 func (m *TransactionInput) Reset()                    { *m = TransactionInput{} }
 func (m *TransactionInput) String() string            { return proto.CompactTextString(m) }
@@ -1185,11 +1190,21 @@ func (m *TransactionInput) GetVout() uint32 {
 	return 0
 }
 
+
 type CreateRawTransactionRequest struct {
 	Inputs   []*TransactionInput `protobuf:"bytes,1,rep,name=inputs" json:"inputs,omitempty"`
 	Amounts  map[string]string   `protobuf:"bytes,2,rep,name=amounts" json:"amounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	LockTime uint64              `protobuf:"varint,3,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	Public   bool                `protobuf:"varint,4,opt,name=public,json=lockTime,proto3" json:"public,omitempty"`
+	Public   bool                `protobuf:"varint,4,opt,name=i,json=public,proto3" json:"public,omitempty"`
+
+}
+
+type CreateSigRawTransactionRequest struct {
+	Inputs   []*TransactionInput `protobuf:"bytes,1,rep,name=inputs" json:"inputs,omitempty"`
+	Amounts  map[string]string   `protobuf:"bytes,2,rep,name=amounts" json:"amounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	LockTime uint64              `protobuf:"varint,3,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
+	P   string                `protobuf:"varint,4,opt,name=p,json=p,proto3" json:"p,omitempty"`
+	Txouts   []*TransactionOutput                `protobuf:"varint,5,opt,name=txouts,json=p,proto3" json:"txouts,omitempty"`
 
 }
 
@@ -2535,7 +2550,9 @@ type ApiServiceClient interface {
 	GetUtxo(ctx context.Context, in *GetUtxoRequest, opts ...grpc.CallOption) (*GetUtxoResponse, error)
 	CreateRawTransaction(ctx context.Context, in *CreateRawTransactionRequest, opts ...grpc.CallOption) (*CreateRawTransactionResponse, error)
 	AutoCreateTransaction(ctx context.Context, in *AutoCreateTransactionRequest, opts ...grpc.CallOption) (*CreateRawTransactionResponse, error)
-	SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
+	CreateSigRawTransaction(ctx context.Context, in *CreateSigRawTransactionRequest, opts ...grpc.CallOption) (*CreateRawTransactionResponse, error)
+	SigRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
+
 	GetTransactionFee(ctx context.Context, in *GetTransactionFeeRequest, opts ...grpc.CallOption) (*GetTransactionFeeResponse, error)
 	SendRawTransaction(ctx context.Context, in *SendRawTransactionRequest, opts ...grpc.CallOption) (*SendRawTransactionResponse, error)
 	// get tx from chaindb
@@ -2556,7 +2573,7 @@ type apiServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewApiServiceClient(cc *grpc.ClientConn) ApiServiceClient {
+func NewApiServiceClient(cc *grpc.ClientConn) *apiServiceClient {
 	return &apiServiceClient{cc}
 }
 
@@ -2731,14 +2748,15 @@ func (c *apiServiceClient) AutoCreateTransaction(ctx context.Context, in *AutoCr
 	return out, nil
 }
 
-func (c *apiServiceClient) SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error) {
+func (c *apiServiceClient) SigRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error) {
 	out := new(SignRawTransactionResponse)
-	err := grpc.Invoke(ctx, "/rpcprotobuf.ApiService/SignRawTransaction", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/rpcprotobuf.ApiService/SigRawTransaction", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
+
 
 func (c *apiServiceClient) GetTransactionFee(ctx context.Context, in *GetTransactionFeeRequest, opts ...grpc.CallOption) (*GetTransactionFeeResponse, error) {
 	out := new(GetTransactionFeeResponse)
@@ -2766,7 +2784,14 @@ func (c *apiServiceClient) GetRawTransaction(ctx context.Context, in *GetRawTran
 	}
 	return out, nil
 }
-
+func (c *apiServiceClient) CreateSigRawTransaction(ctx context.Context, in *CreateSigRawTransactionRequest, opts ...grpc.CallOption) (*CreateRawTransactionResponse, error) {
+	out := new(CreateRawTransactionResponse)
+	err := grpc.Invoke(ctx, "/rpcprotobuf.ApiService/CreateSigRawTransaction", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 func (c *apiServiceClient) GetTxStatus(ctx context.Context, in *GetTxStatusRequest, opts ...grpc.CallOption) (*GetTxStatusResponse, error) {
 	out := new(GetTxStatusResponse)
 	err := grpc.Invoke(ctx, "/rpcprotobuf.ApiService/GetTxStatus", in, out, c.cc, opts...)
@@ -2863,6 +2888,8 @@ type ApiServiceServer interface {
 	ValidateAddress(context.Context, *ValidateAddressRequest) (*ValidateAddressResponse, error)
 	// if addresses not provided, return utxos of all addresses
 	GetUtxo(context.Context, *GetUtxoRequest) (*GetUtxoResponse, error)
+	CreateSigRawTransaction(context.Context, *CreateSigRawTransactionRequest) (*CreateRawTransactionResponse, error)
+
 	CreateRawTransaction(context.Context, *CreateRawTransactionRequest) (*CreateRawTransactionResponse, error)
 	AutoCreateTransaction(context.Context, *AutoCreateTransactionRequest) (*CreateRawTransactionResponse, error)
 	SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error)
@@ -3209,6 +3236,23 @@ func _ApiService_CreateRawTransaction_Handler(srv interface{}, ctx context.Conte
 	}
 	return interceptor(ctx, in, info, handler)
 }
+func _ApiService_CreateSigRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSigRawTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).CreateSigRawTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/rpcprotobuf.ApiService/CreateSigRawTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).CreateSigRawTransaction(ctx, req.(*CreateSigRawTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
 
 func _ApiService_AutoCreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AutoCreateTransactionRequest)
@@ -3520,6 +3564,11 @@ var _ApiService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "CreateRawTransaction",
 			Handler:    _ApiService_CreateRawTransaction_Handler,
 		},
+		{
+			MethodName: "CreateSigRawTransaction",
+			Handler:    _ApiService_CreateSigRawTransaction_Handler,
+		},
+
 		{
 			MethodName: "AutoCreateTransaction",
 			Handler:    _ApiService_AutoCreateTransaction_Handler,

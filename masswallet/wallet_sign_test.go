@@ -271,6 +271,21 @@ func TestAnyoneCanPay(t *testing.T) {
 }
 
 //test the signTxOutputWit function
+func TestSignTxOutput(t *testing.T) {
+
+	redeemScript, witnessAddress, err := keystore.NewNonPersistentWitSAddrForBtcec([], 1, massutil.AddressClassWitnessV0, &config.ChainParams)
+
+	//getScript := txscript.ScriptClosure(func(addr massutil.Address) ([]byte, error) {
+	//	// If keys were provided then we can only use the
+	//	// redeem scripts provided with our inputs, too.
+	//
+	//	script, _ := w.WitnessMap[addr.EncodeAddress()]
+	//
+	//	return script, nil
+	//})
+}
+
+//test the signTxOutputWit function
 func TestSignTxOutputWit(t *testing.T) {
 	// t.Parallel()
 	w, err := iniWallet("txScriptWallet")

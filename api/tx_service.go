@@ -377,6 +377,8 @@ func (s *APIServer) GetRawTransaction(ctx context.Context, in *pb.GetRawTransact
 	return rep, nil
 }
 
+
+
 func (s *APIServer) CreateRawTransaction(ctx context.Context, in *pb.CreateRawTransactionRequest) (*pb.CreateRawTransactionResponse, error) {
 	logging.CPrint(logging.INFO, "api: CreateRawTransaction", logging.LogFormat{"params": in})
 
