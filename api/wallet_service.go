@@ -3,6 +3,8 @@ package api
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"github.com/btcsuite/btcutil"
+	"massnet.org/mass-wallet/masswallet"
 	"sort"
 
 	"massnet.org/mass-wallet/consensus"
@@ -149,6 +151,95 @@ func decodeHexStr(hexStr string) ([]byte, error) {
 		return nil, err
 	}
 	return decoded, nil
+}
+
+func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSigRawTransactionRequest) (*pb.CreateRawTransactionResponse, error) {
+	logging.CPrint(logging.INFO, "api: CreateSigRawTransaction", logging.LogFormat{"params": in})
+
+
+	inputs := make([]*masswallet.TxIn, 0)
+	for _, txInput := range in.Inputs {
+		err := checkTransactionIdLen(txInput.TxId)
+		if err != nil {
+			return nil, err
+		}
+		input := &masswallet.TxIn{
+			TxId: txInput.TxId,
+			Vout: txInput.Vout,
+		}
+		inputs = append(inputs, input)
+	}
+	amounts := make(map[string]massutil.Amount)
+	for addr, value := range in.Amounts {
+		err := checkAddressLen(addr)
+		if err != nil {
+			return nil, err
+		}
+		val, err := checkParseAmount(value)
+		if err != nil {
+			return nil, err
+		}
+		amounts[addr] = val
+	}
+
+	mtxHex, err := s.massWallet.CreateRawTransaction(inputs, amounts, in.LockTime, true)
+
+
+	if err != nil {
+		logging.CPrint(logging.ERROR, "CreateRawTransaction failed", logging.LogFormat{"err": err})
+		cvtErr := convertResponseError(err)
+		if cvtErr == apiUnknownError {
+			return nil, status.New(ErrAPIAbnormalData, ErrCode[ErrAPIAbnormalData]).Err()
+		}
+		return nil, cvtErr
+	}
+	logging.CPrint(logging.INFO, "api: CreateRawTransaction completed", logging.LogFormat{})
+
+	serializedTx, err := decodeHexStr(mtxHex)
+	if err != nil {
+		logging.CPrint(logging.ERROR, "Error in decodeHexStr", logging.LogFormat{
+			"err": err,
+		})
+		st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
+		return nil, st.Err()
+	}
+	var tx wire.MsgTx
+	err = tx.SetBytes(serializedTx, wire.Packet)
+	if err != nil {
+		logging.CPrint(logging.ERROR, "Failed to decode tx", logging.LogFormat{"err": err.Error()})
+		st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
+		return nil, st.Err()
+	}
+
+	var txouts []wire.TxOut
+	for _, out := range in.Txouts {
+		pkscript, err := hex.DecodeString(out.PkScript)
+		if(err !=nil ) {
+			st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
+			return nil, st.Err()
+		}
+		txouts = append(txouts, wire.TxOut{
+			Value: out.Value,
+			PkScript: pkscript,
+		})
+	}
+
+	wif, err := btcutil.DecodeWIF(in.P)
+	logging.CPrint(logging.INFO, "get tx", logging.LogFormat{"tx input count": len(tx.TxIn), "tx output count": len(tx.TxOut)})
+	masswallet.SignWitnessTxWithPriv(*wif.PrivKey, &tx,txscript.SigHashAll, &cfg.ChainParams,txouts)
+
+	bs, err := tx.Bytes(wire.Packet)
+	if err != nil {
+		logging.CPrint(logging.FATAL, "err in api tx serialize", logging.LogFormat{
+			"err":  err,
+			"hash": tx.TxHash().String(),
+		})
+		st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
+
+		return nil, st.Err()
+	}
+	logging.CPrint(logging.INFO, "api: SignRawTransaction completed", logging.LogFormat{})
+	return &pb.CreateRawTransactionResponse{Hex: hex.EncodeToString(bs)}, nil
 }
 
 func (s *APIServer) SendRawTransaction(ctx context.Context, in *pb.SendRawTransactionRequest) (*pb.SendRawTransactionResponse, error) {

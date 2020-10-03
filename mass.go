@@ -52,6 +52,7 @@ func massMain(serverChan chan<- *server) error {
 		return err
 	}
 
+	// update configuration from config json.
 	config.LoadConfig(tempCfg)
 	cfg = config.CheckConfig(tempCfg)
 

@@ -14,10 +14,11 @@ import (
 	"massnet.org/mass-wallet/config"
 	"massnet.org/mass-wallet/logging"
 	"massnet.org/mass-wallet/massutil"
+	"massnet.org/mass-wallet/wire"
+
 	mwdb "massnet.org/mass-wallet/masswallet/db"
 	"massnet.org/mass-wallet/masswallet/utils"
 	"massnet.org/mass-wallet/txscript"
-	"massnet.org/mass-wallet/wire"
 
 	"errors"
 	"sort"
@@ -700,11 +701,91 @@ func optOutputs(amount massutil.Amount, utxos []*txmgr.Credit) ([]*txmgr.Credit,
 
 	return selections, sumSelection, sumReserve, nil
 }
+func SignHash(privatekey btcec.PrivateKey,hash []byte) (signed *btcec.Signature, err error){
+	signed, err = privatekey.Sign(hash)
+	if err != nil {
+		logging.CPrint(logging.ERROR, "sign failed",
+			logging.LogFormat{
+				"err": err,
+			})
+		return nil, err
+	}
+	return signed, nil
+}
+func RedeemScript(chainParams *config.Params, pub *btcec.PublicKey) ([]byte, error) {
+	var pubkeys []*btcec.PublicKey
+	pubkeys = append(pubkeys, pub)
 
+	script, _, err := keystore.NewNonPersistentWitSAddrForBtcec(pubkeys, 1, massutil.AddressClassWitnessV0, chainParams)
+	if err != nil {
+		return nil, err
+	}
+	return script, nil
+}
 func (w *WalletManager) SignHash(pub *btcec.PublicKey, hash, password []byte) (*btcec.Signature, error) {
 	return w.ksmgr.SignHash(pub, hash, password)
 }
+func SignWitnessTxWithPriv(privatekey btcec.PrivateKey,tx *wire.MsgTx, hashType txscript.SigHashType, params *config.Params ,txouts []wire.TxOut) error {
 
+	hashCache := txscript.NewTxSigHashes(tx)
+
+
+	getSign := txscript.SignClosure(func(pub *btcec.PublicKey, hash []byte) (*btcec.Signature, error) {
+		sig, err := SignHash(privatekey, hash)
+		if err != nil {
+			return nil, err
+		}
+		return sig, nil
+	})
+
+	getScript := txscript.ScriptClosure(func(addr massutil.Address) ([]byte, error) {
+		script, err := RedeemScript(params, privatekey.PubKey())
+		if err != nil {
+			logging.CPrint(logging.ERROR, "ScriptClosure error", logging.LogFormat{"err": err})
+			return nil, keystore.ErrBuildWitnessScript
+		}
+		return script, nil
+	})
+
+	for i, txIn := range tx.TxIn {
+
+
+		// SigHashSingle inputs can only be signed if there's a
+		// corresponding output. However this could be already signed,
+		// so we always verify the output.
+		if (hashType&txscript.SigHashSingle) !=
+			txscript.SigHashSingle || i < len(tx.TxOut) {
+
+			script, err := txscript.SignTxOutputWit(params, tx, i, txouts[i].Value, txouts[i].PkScript, hashCache, hashType, getSign, getScript)
+
+			// Failure to sign isn't an error, it just means that
+			// the tx isn't complete.
+			if err != nil {
+				logging.CPrint(logging.ERROR, "Err in txscript.SignTxOutputWit", logging.LogFormat{
+					"err": err,
+				})
+				return err
+			}
+			txIn.Witness = script
+		}
+
+		// Either it was already signed or we just signed it.
+		// Find out if it is completely satisfied or still needs more.
+		vm, err := txscript.NewEngine(txouts[i].PkScript, tx, i,
+			txscript.StandardVerifyFlags, nil, hashCache, txouts[i].Value)
+		if err == nil {
+			err = vm.Execute()
+			if err != nil {
+				return err
+			}
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 func (w *WalletManager) signWitnessTx(password []byte, tx *wire.MsgTx, hashType txscript.SigHashType, params *config.Params) error {
 
 	hashCache := txscript.NewTxSigHashes(tx)
