@@ -1166,7 +1166,7 @@ type TransactionInput struct {
 	Vout uint32 `protobuf:"varint,2,opt,name=vout,proto3" json:"vout,omitempty"`
 }
 type TransactionOutput struct {
-	Value    int64`protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value    v`protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 	PkScript string `protobuf:"bytes,2,opt,name=pkscript,json=pkscript,proto3" json:"pkscript,omitempty"`
 
 }

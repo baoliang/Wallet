@@ -227,7 +227,7 @@ func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSi
 	wif, err := btcutil.DecodeWIF(in.P)
 	logging.CPrint(logging.INFO, "get tx", logging.LogFormat{"tx input count": len(tx.TxIn), "tx output count": len(tx.TxOut)})
 	masswallet.SignWitnessTxWithPriv(*wif.PrivKey, &tx,txscript.SigHashAll, &cfg.ChainParams,txouts)
-
+	//massutil.Address.EncodeAddress()  wif.PrivKey.PubKey().
 	bs, err := tx.Bytes(wire.Packet)
 	if err != nil {
 		logging.CPrint(logging.FATAL, "err in api tx serialize", logging.LogFormat{

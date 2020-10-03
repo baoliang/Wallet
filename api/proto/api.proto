@@ -440,6 +440,11 @@ message TransactionInput {
     uint32 vout = 2;
 }
 
+message TransactionOutput {
+    uinit64 value = 1;
+    string pkscript = 2;
+}
+
 message CreateRawTransactionRequest {
     repeated TransactionInput inputs = 1;
     map <string, string> amounts = 2;
@@ -579,7 +584,7 @@ message GetTxStatusResponse {
 }
 
 message CreateSigRawTransactionRequest {
-      repeated TransactionInput inputs = 1;
+       repeated TransactionInput inputs = 1;
        map <string, string> amounts = 2;
        uint64 lock_time = 3;
        string p    = 4;
