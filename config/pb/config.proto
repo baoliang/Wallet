@@ -12,10 +12,10 @@ message Config {
 }
 
 message P2PConfig {
-    string          seeds              = 1;
-    repeated string add_peer           = 2;
+    string          seeds              = 1; // Complete seed node.
+    repeated string add_peer           = 2; // Nodes waiting to be downloaded.
     bool            skip_upnp          = 3;
-    uint32          handshake_timeout  = 4;
+    uint32          handshake_timeout  = 4; // connect handshake timeout.
     uint32          dial_timeout       = 5;
     bool            vault_mode         = 6;
     string          listen_address     = 7;
