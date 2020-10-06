@@ -162,6 +162,13 @@ service ApiService {
               body:"*"
         };
     }
+
+    rpc CreateSigRawTransaction (CreateSigRawTransactionRequest) returns (CreateRawTransactionResponse){
+        option (google.api.http) = {
+              post: "/v1/transactions/createraw"
+              body:"*"
+        };
+    }
     rpc AutoCreateTransaction (AutoCreateTransactionRequest) returns (CreateRawTransactionResponse){
         option (google.api.http) = {
               post: "/v1/transactions/create/auto"
@@ -433,6 +440,11 @@ message TransactionInput {
     uint32 vout = 2;
 }
 
+message TransactionOutput {
+    uinit64 value = 1;
+    string pkscript = 2;
+}
+
 message CreateRawTransactionRequest {
     repeated TransactionInput inputs = 1;
     map <string, string> amounts = 2;
@@ -571,6 +583,13 @@ message GetTxStatusResponse {
     string status = 2;
 }
 
+message CreateSigRawTransactionRequest {
+       repeated TransactionInput inputs = 1;
+       map <string, string> amounts = 2;
+       uint64 lock_time = 3;
+       string p    = 4;
+       repeated TransactionOutput  txouts  =5;
+}
 message SignRawTransactionRequest {
     string raw_tx = 1;
     string flags = 2;  //optional;default "ALL"

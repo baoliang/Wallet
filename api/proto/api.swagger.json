@@ -448,6 +448,44 @@
         ]
       }
     },
+    "/v1/transactions/createraw": {
+      "post": {
+        "operationId": "CreateSigRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rpcprotobufCreateRawTransactionResponse"
+            }
+          },
+          "403": {
+            "description": "No permission.",
+            "schema": {
+              "format": "string"
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "schema": {
+              "format": "string"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rpcprotobufCreateSigRawTransactionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ApiService"
+        ]
+      }
+    },
     "/v1/transactions/create/auto": {
       "post": {
         "operationId": "AutoCreateTransaction",
