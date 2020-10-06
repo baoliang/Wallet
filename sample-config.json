@@ -9,11 +9,32 @@
       "seeds": "",
       "add_peer": "",
       "skip_upnp": "",
-      "handshake_timeout": 0
+      "handshake_timeout": 0,
+      "dial_timeout": 0,
+      "vault_mode": false,
+      "listen_address": ""
     },
-    "api": {}
+    "api": {
+      "host": "",
+      "grpc_port": "",
+      "http_port": "",
+      "http_cors_addr": [],
+      "disable_tls": false,
+      "rpc_cert": "",
+      "rpc_key": ""
+    }
   },
-  "log": {},
-  "data": {},
-  "advanced": {}
+  "log": {
+    "log_dir": "",
+    "log_level": ""
+  },
+  "data": {
+    "db_type": "",
+    "db_dir": "",
+    "wallet_pub_pass": ""
+  },
+  "advanced": {
+    "address_gap_limit": "",
+    "max_unused_staking_address": ""
+  }
 }
