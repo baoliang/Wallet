@@ -1,0 +1,19 @@
+{
+  "app": {
+    "profile": true,
+    "cpu_profile": true,
+    "noPeerBloomFilters": ""
+  },
+  "network": {
+    "p2p": {
+      "seeds": "",
+      "add_peer": "",
+      "skip_upnp": "",
+      "handshake_timeout": 0
+    },
+    "api": {}
+  },
+  "log": {},
+  "data": {},
+  "advanced": {}
+}
