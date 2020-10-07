@@ -1,14 +1,14 @@
 {
   "app": {
-    "profile": true,
-    "cpu_profile": true,
+    "profile": "true",
+    "cpu_profile": "true",
     "noPeerBloomFilters": ""
   },
   "network": {
     "p2p": {
       "seeds": "",
-      "add_peer": "",
-      "skip_upnp": "",
+      "add_peer": [],
+      "skip_upnp": true,
       "handshake_timeout": 0,
       "dial_timeout": 0,
       "vault_mode": false,
@@ -29,12 +29,12 @@
     "log_level": ""
   },
   "data": {
-    "db_type": "",
+    "db_type": "leveldb",
     "db_dir": "",
     "wallet_pub_pass": ""
   },
   "advanced": {
-    "address_gap_limit": "",
-    "max_unused_staking_address": ""
+    "address_gap_limit": 5000,
+    "max_unused_staking_address": 3000
   }
 }
