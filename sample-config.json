@@ -1,0 +1,38 @@
+{
+  "app": {
+    "noPeerBloomFilters": ""
+  },
+  "network": {
+    "p2p": {
+      "seeds": "",
+      "add_peer": [],
+      "skip_upnp": true,
+      "handshake_timeout": 0,
+      "dial_timeout": 0,
+      "vault_mode": false,
+      "listen_address": ""
+    },
+    "api": {
+      "host": "",
+      "grpc_port": "",
+      "http_port": "",
+      "http_cors_addr": [],
+      "disable_tls": false,
+      "rpc_cert": "",
+      "rpc_key": ""
+    }
+  },
+  "log": {
+    "log_dir": "logs",
+    "log_level": "debug"
+  },
+  "data": {
+    "db_type": "leveldb",
+    "db_dir": "",
+    "wallet_pub_pass": ""
+  },
+  "advanced": {
+    "address_gap_limit": 5000,
+    "max_unused_staking_address": 3000
+  }
+}

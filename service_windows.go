@@ -2,6 +2,8 @@
 // Use of this source code is governed by an ISC
 // license that can be found in the LICENSE file.
 
+// +build windows
+
 package main
 
 import (
@@ -21,12 +23,12 @@ import (
 
 const (
 	// svcName is the name of mass service.
-	svcName = "masswalletsvc"
+	svcName = "sktwalletsvc"
 
 	// svcDisplayName is the service name that will be shown in the windows
 	// services list.  Not the svcName is the "real" name which is used
 	// to control the service.  This is only for display purposes.
-	svcDisplayName = "MassWallet Service"
+	svcDisplayName = "Skt Wallet Service"
 
 	// svcDesc is the description of the service.
 	svcDesc = "Downloads and stays synchronized with the bitcoin block " +
