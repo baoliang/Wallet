@@ -37,6 +37,7 @@ It has these top-level messages:
 	TxHistoryResponse
 	TxHistoryRequest
 	TransactionInput
+	TransactionOutput
 	CreateRawTransactionRequest
 	AutoCreateTransactionRequest
 	CreateRawTransactionResponse
@@ -831,6 +832,8 @@ func (m *ValidateAddressResponse) GetVersion() int32 {
 
 type CreateAddressRequest struct {
 	Version int32 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
+	P string `protobuf:"bytes,2,opt,name=p,proto3" json:"p,omitempty"`
+
 }
 
 func (m *CreateAddressRequest) Reset()                    { *m = CreateAddressRequest{} }
@@ -863,6 +866,8 @@ func (m *CreateAddressResponse) GetAddress() string {
 
 type GetAddressesRequest struct {
 	Version int32 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
+	P string `protobuf:"bytes,2,opt,name=p,proto3" json:"p,omitempty"`
+
 }
 
 func (m *GetAddressesRequest) Reset()                    { *m = GetAddressesRequest{} }
@@ -876,6 +881,7 @@ func (m *GetAddressesRequest) GetVersion() int32 {
 	}
 	return 0
 }
+
 
 type GetAddressesResponse struct {
 	Details []*GetAddressesResponse_AddressDetail `protobuf:"bytes,1,rep,name=details" json:"details,omitempty"`
@@ -1166,10 +1172,15 @@ type TransactionInput struct {
 	Vout uint32 `protobuf:"varint,2,opt,name=vout,proto3" json:"vout,omitempty"`
 }
 type TransactionOutput struct {
-	Value    v`protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value    int64 `protobuf:"varint,1,opt,name=value,json=value,proto3" json:"value,omitempty"`
 	PkScript string `protobuf:"bytes,2,opt,name=pkscript,json=pkscript,proto3" json:"pkscript,omitempty"`
 
 }
+
+func (m *TransactionOutput) Reset()                    { *m = TransactionOutput{} }
+func (m *TransactionOutput) String() string            { return proto.CompactTextString(m) }
+func (*TransactionOutput) ProtoMessage()               {}
+func (*TransactionOutput) Descriptor() ([]byte, []int) { return fileDescriptorApi, []int{28} }
 
 func (m *TransactionInput) Reset()                    { *m = TransactionInput{} }
 func (m *TransactionInput) String() string            { return proto.CompactTextString(m) }
@@ -1203,8 +1214,8 @@ type CreateSigRawTransactionRequest struct {
 	Inputs   []*TransactionInput `protobuf:"bytes,1,rep,name=inputs" json:"inputs,omitempty"`
 	Amounts  map[string]string   `protobuf:"bytes,2,rep,name=amounts" json:"amounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	LockTime uint64              `protobuf:"varint,3,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
-	P   string                `protobuf:"varint,4,opt,name=p,json=p,proto3" json:"p,omitempty"`
-	Txouts   []*TransactionOutput                `protobuf:"varint,5,opt,name=txouts,json=p,proto3" json:"txouts,omitempty"`
+	P   string                 `protobuf:"bytes,3,opt,name=p,json=p,proto3" json:"p,omitempty"`
+	Txouts   []*TransactionOutput  `protobuf:"bytes,4,rep,name=txouts" json:"txouts,omitempty"`
 
 }
 
@@ -1228,6 +1239,33 @@ func (m *CreateRawTransactionRequest) GetAmounts() map[string]string {
 }
 
 func (m *CreateRawTransactionRequest) GetLockTime() uint64 {
+	if m != nil {
+		return m.LockTime
+	}
+	return 0
+}
+
+
+func (m *CreateSigRawTransactionRequest) Reset()                    { *m = CreateSigRawTransactionRequest{} }
+func (m *CreateSigRawTransactionRequest) String() string            { return proto.CompactTextString(m) }
+func (*CreateSigRawTransactionRequest) ProtoMessage()               {}
+func (*CreateSigRawTransactionRequest) Descriptor() ([]byte, []int) { return fileDescriptorApi, []int{29} }
+
+func (m *CreateSigRawTransactionRequest) GetInputs() []*TransactionInput {
+	if m != nil {
+		return m.Inputs
+	}
+	return nil
+}
+
+func (m *CreateSigRawTransactionRequest) GetAmounts() map[string]string {
+	if m != nil {
+		return m.Amounts
+	}
+	return nil
+}
+
+func (m *CreateSigRawTransactionRequest) GetLockTime() uint64 {
 	if m != nil {
 		return m.LockTime
 	}

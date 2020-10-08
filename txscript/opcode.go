@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"hash"
+	"massnet.org/mass-wallet/logging"
 
 	"github.com/btcsuite/btcd/btcec"
 	"golang.org/x/crypto/ripemd160"
@@ -2022,6 +2023,8 @@ func opcodeCheckSig(op *parsedOpcode, vm *Engine) error {
 	}
 
 	if !valid && len(sigBytes) > 0 {
+		logging.CPrint(logging.ERROR, "opcodeCheckSig errpr",
+			logging.LogFormat{})
 		return ErrNullFail
 	}
 
@@ -2272,8 +2275,14 @@ func opcodeCheckMultiSig(op *parsedOpcode, vm *Engine) error {
 // [... dummy [sig ...] numsigs [pubkey ...] numpubkeys] -> [... bool] -> [...]
 func opcodeCheckMultiSigVerify(op *parsedOpcode, vm *Engine) error {
 	err := opcodeCheckMultiSig(op, vm)
+
 	if err == nil {
 		err = opcodeVerify(op, vm)
+	} else {
+		logging.CPrint(logging.ERROR, "opcodeCheckMultiSigVerify 0", logging.LogFormat{
+			"pkscript": "",
+
+		})
 	}
 	return err
 }
