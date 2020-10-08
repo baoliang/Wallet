@@ -1,7 +1,5 @@
 {
   "app": {
-    "profile": "true",
-    "cpu_profile": "true",
     "noPeerBloomFilters": ""
   },
   "network": {
@@ -25,8 +23,8 @@
     }
   },
   "log": {
-    "log_dir": "",
-    "log_level": ""
+    "log_dir": "logs",
+    "log_level": "debug"
   },
   "data": {
     "db_type": "leveldb",
