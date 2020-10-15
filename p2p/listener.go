@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
+	cmn "github.com/massnetorg/tendermint/tmlibs/common"
 	configpb "massnet.org/mass-wallet/config/pb"
 	"massnet.org/mass-wallet/errors"
 	"massnet.org/mass-wallet/logging"
 	"massnet.org/mass-wallet/p2p/upnp"
-	cmn "github.com/massnetorg/tendermint/tmlibs/common"
 )
 
 const (
@@ -101,6 +101,10 @@ type DefaultListener struct {
 // Defaults to tcp
 func protocolAndAddress(listenAddr string) (string, string) {
 	p, address := "tcp", listenAddr
+	if len(address) == 0 {
+		address = "0.0.0.0:50050"
+		return p, address
+	}
 	parts := strings.SplitN(address, "://", 2)
 	if len(parts) == 2 {
 		p, address = parts[0], parts[1]

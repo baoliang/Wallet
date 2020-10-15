@@ -6,7 +6,7 @@
     "p2p": {
       "seeds": "",
       "add_peer": [],
-      "skip_upnp": true,
+      "skip_upnp": false,
       "handshake_timeout": 0,
       "dial_timeout": 0,
       "vault_mode": false,
@@ -17,7 +17,7 @@
       "grpc_port": "",
       "http_port": "",
       "http_cors_addr": [],
-      "disable_tls": false,
+      "disable_tls": true,
       "rpc_cert": "",
       "rpc_key": ""
     }
