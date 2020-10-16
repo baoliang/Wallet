@@ -4,7 +4,7 @@
   },
   "network": {
     "p2p": {
-      "seeds": "",
+      "seeds": "188.131.180.160",
       "add_peer": [],
       "skip_upnp": false,
       "handshake_timeout": 0,
@@ -13,10 +13,10 @@
       "listen_address": ""
     },
     "api": {
-      "host": "",
-      "grpc_port": "",
-      "http_port": "",
-      "http_cors_addr": [],
+      "host": "0.0.0.0",
+      "grpc_port": "50051",
+      "http_port": "50052",
+      "http_cors_addr": ["*"],
       "disable_tls": true,
       "rpc_cert": "",
       "rpc_key": ""
@@ -28,7 +28,7 @@
   },
   "data": {
     "db_type": "leveldb",
-    "db_dir": "",
+    "db_dir": "chain",
     "wallet_pub_pass": "123456"
   },
   "advanced": {
