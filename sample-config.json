@@ -29,7 +29,7 @@
   "data": {
     "db_type": "leveldb",
     "db_dir": "",
-    "wallet_pub_pass": ""
+    "wallet_pub_pass": "123456"
   },
   "advanced": {
     "address_gap_limit": 5000,
