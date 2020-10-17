@@ -745,6 +745,30 @@ func SignWitnessTxWithPriv(privatekey btcec.PrivateKey,tx *wire.MsgTx, hashType 
 			return nil, keystore.ErrBuildWitnessScript
 		}
 		return script, nil
+
+
+		//
+		//scriptHash := addr.ScriptAddress()
+		//
+		//address, err := massutil.NewAddressWitnessScriptHash(scriptHash, w.chainParams)
+		//if err != nil {
+		//	logging.CPrint(logging.ERROR, "ScriptClosure error", logging.LogFormat{"err": err})
+		//	return nil, keystore.ErrBuildWitnessScript
+		//}
+		//addrStr := address.EncodeAddress()
+		//
+		//acctM := w.ksmgr.CurrentKeystore()
+		//mAddr, err := acctM.Address(addrStr)
+		//if err != nil {
+		//	logging.CPrint(logging.ERROR, "ScriptClosure error", logging.LogFormat{"err": err})
+		//	return nil, keystore.ErrUnexpectedPubKeyToSign
+		//}
+		//script, err := mAddr.RedeemScript(w.chainParams)
+		//if err != nil {
+		//	logging.CPrint(logging.ERROR, "ScriptClosure error", logging.LogFormat{"err": err})
+		//	return nil, keystore.ErrBuildWitnessScript
+		//}
+		//return script, nil
 	})
 
 	for i, txIn := range tx.TxIn {
@@ -773,9 +797,21 @@ func SignWitnessTxWithPriv(privatekey btcec.PrivateKey,tx *wire.MsgTx, hashType 
 		// Find out if it is completely satisfied or still needs more.
 		vm, err := txscript.NewEngine(txouts[i].PkScript, tx, i,
 			txscript.StandardVerifyFlags, nil, hashCache, txouts[i].Value)
+		logging.CPrint(logging.INFO, "verofu 0", logging.LogFormat{
+			"err": err,
+			"pkscript": txouts[i].PkScript,
+			"tx": tx,
+			"i": i,
+			"txscript.StandardVerifyFlags": txscript.StandardVerifyFlags,
+			"hashCache": hashCache,
+			"txouts[i].Value": txouts[i].Value,
+		})
 		if err == nil {
 			err = vm.Execute()
 			if err != nil {
+				logging.CPrint(logging.ERROR, "Err gen in txscript.SignTxOutputWit", logging.LogFormat{
+					"err": err,
+				})
 				return err
 			}
 		}

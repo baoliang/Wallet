@@ -28,7 +28,7 @@ const (
 	DefaultConfigFilename  = "config.json"
 	DefaultChainDataDir    = "chain"
 	DefaultElkFilename     = "json-masswallet"
-	DefaultLoggingFilename = "masswalletlog"
+	DefaultLoggingFilename = "walletlog"
 
 	defaultChainTag    = "mainnet"
 	defaultShowVersion = false

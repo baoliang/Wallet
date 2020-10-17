@@ -135,6 +135,8 @@ service ApiService {
     rpc GetAddresses (GetAddressesRequest) returns (GetAddressesResponse){
         option (google.api.http) = {
               get: "/v1/addresses/{version}"
+              post: "/v1/addresses/{version}"
+
         };
     }
     // if addresses not provided, return balances of all addresses
@@ -377,6 +379,7 @@ message ValidateAddressResponse {
 
 message CreateAddressRequest {
    int32 version = 1;  // 0-standard address, 1-staking address
+   string p = 2; // 0-standard address, 1-staking address
 }
 message CreateAddressResponse {
     string address = 1;
@@ -384,6 +387,8 @@ message CreateAddressResponse {
 
 message GetAddressesRequest {
     int32 version = 1; // 0-standard address, 1-staking address
+    string p = 2; // 0-standard address, 1-staking address
+
 }
 
 message GetAddressesResponse  {
@@ -441,7 +446,7 @@ message TransactionInput {
 }
 
 message TransactionOutput {
-    uinit64 value = 1;
+    uint64 value = 1;
     string pkscript = 2;
 }
 

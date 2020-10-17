@@ -3,12 +3,15 @@ package api
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
+	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcutil"
+	"massnet.org/mass-wallet/consensus"
 	"massnet.org/mass-wallet/masswallet"
+	"massnet.org/mass-wallet/masswallet/keystore"
 	"sort"
 
-	"massnet.org/mass-wallet/consensus"
-
+	"massnet.org/mass-wallet/config"
 	"strings"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -156,7 +159,6 @@ func decodeHexStr(hexStr string) ([]byte, error) {
 func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSigRawTransactionRequest) (*pb.CreateRawTransactionResponse, error) {
 	logging.CPrint(logging.INFO, "api: CreateSigRawTransaction", logging.LogFormat{"params": in})
 
-
 	inputs := make([]*masswallet.TxIn, 0)
 	for _, txInput := range in.Inputs {
 		err := checkTransactionIdLen(txInput.TxId)
@@ -184,7 +186,6 @@ func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSi
 
 	mtxHex, err := s.massWallet.CreateRawTransaction(inputs, amounts, in.LockTime, true)
 
-
 	if err != nil {
 		logging.CPrint(logging.ERROR, "CreateRawTransaction failed", logging.LogFormat{"err": err})
 		cvtErr := convertResponseError(err)
@@ -203,7 +204,7 @@ func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSi
 		st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
 		return nil, st.Err()
 	}
-	var tx wire.MsgTx
+	tx := wire.NewMsgTx()
 	err = tx.SetBytes(serializedTx, wire.Packet)
 	if err != nil {
 		logging.CPrint(logging.ERROR, "Failed to decode tx", logging.LogFormat{"err": err.Error()})
@@ -214,21 +215,30 @@ func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSi
 	var txouts []wire.TxOut
 	for _, out := range in.Txouts {
 		pkscript, err := hex.DecodeString(out.PkScript)
-		if(err !=nil ) {
+		if err != nil {
 			st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
 			return nil, st.Err()
 		}
 		txouts = append(txouts, wire.TxOut{
-			Value: out.Value,
+			Value:    out.Value,
 			PkScript: pkscript,
 		})
 	}
 
 	wif, err := btcutil.DecodeWIF(in.P)
+
 	logging.CPrint(logging.INFO, "get tx", logging.LogFormat{"tx input count": len(tx.TxIn), "tx output count": len(tx.TxOut)})
-	masswallet.SignWitnessTxWithPriv(*wif.PrivKey, &tx,txscript.SigHashAll, &cfg.ChainParams,txouts)
+	error := masswallet.SignWitnessTxWithPriv(*wif.PrivKey, tx, txscript.SigHashAll, &cfg.ChainParams, txouts)
+	if error != nil {
+		logging.CPrint(logging.FATAL, "error", logging.LogFormat{
+			"err":  err,
+			"hash": tx.TxHash().String(),
+		})
+		st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
+
+		return nil, st.Err()
+	}
 	//massutil.Address.EncodeAddress()  wif.PrivKey.PubKey().
-	bs, err := tx.Bytes(wire.Packet)
 	if err != nil {
 		logging.CPrint(logging.FATAL, "err in api tx serialize", logging.LogFormat{
 			"err":  err,
@@ -238,8 +248,25 @@ func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSi
 
 		return nil, st.Err()
 	}
+	ntx := massutil.NewTx(tx)
+	logging.CPrint(logging.INFO, "semd tx", logging.LogFormat{
+		"tx": tx.TxIn,
+	})
+	//logging.CPrint(logging.ERROR, "failed to construct vm engine",
+	//	logging.LogFormat{"transaction": txVI.tx.Hash(), "index": txVI.txInIndex, "previousOutPoint": txIn.PreviousOutPoint,
+	//		"input witness": witness, "reference pkScript": pkScript, "err": err})
+	_, err = s.node.Blockchain().ProcessTx(ntx)
+	if err != nil {
+		logging.CPrint(logging.ERROR, "ProcessTx failed", logging.LogFormat{"err": err})
+		//s.massWallet.ClearUsedUTXOMark(ntx)
+		cvtErr := convertResponseError(err)
+		if cvtErr == apiUnknownError {
+			return nil, status.New(ErrAPIRejectTx, ErrCode[ErrAPIRejectTx]).Err()
+		}
+		return nil, cvtErr
+	}
 	logging.CPrint(logging.INFO, "api: SignRawTransaction completed", logging.LogFormat{})
-	return &pb.CreateRawTransactionResponse{Hex: hex.EncodeToString(bs)}, nil
+	return &pb.CreateRawTransactionResponse{Hex: "ok"}, nil
 }
 
 func (s *APIServer) SendRawTransaction(ctx context.Context, in *pb.SendRawTransactionRequest) (*pb.SendRawTransactionResponse, error) {
@@ -541,7 +568,31 @@ func (s *APIServer) GetStakingHistory(ctx context.Context, in *empty.Empty) (*pb
 
 func (s *APIServer) CreateAddress(ctx context.Context, in *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
 	logging.CPrint(logging.INFO, "api: CreateAddress", logging.LogFormat{"version": in.Version})
+	if len(in.P) > 0 {
+		// wif : wallet-import-format.
+		wif, err := btcutil.DecodeWIF(in.P)
+		if err != nil {
+			fmt.Println(err)
+		}
+		var pubs []*btcec.PublicKey
+		pubs = append(pubs, wif.PrivKey.PubKey())
+		_, add, err := keystore.NewNonPersistentWitSAddrForBtcec(pubs, 1, massutil.AddressClassWitnessV0, &config.ChainParams)
+		fmt.Println(add.EncodeAddress())
+		details := make([]*pb.GetAddressesResponse_AddressDetail, 0)
+		pbAd := &pb.GetAddressesResponse_AddressDetail{
+			Address:    add.EncodeAddress(),
+			Version:    0,
+			Used:       true,
+			StdAddress: "",
+		}
+		details = append(details, pbAd)
 
+		reps := &pb.CreateAddressResponse{
+			Address: add.EncodeAddress(),
+		}
+
+		return reps, nil
+	}
 	addressClass := uint16(in.Version)
 	if !massutil.IsValidAddressClass(addressClass) {
 		logging.CPrint(logging.ERROR, ErrCode[ErrAPIInvalidVersion], logging.LogFormat{
@@ -587,8 +638,9 @@ func (s *APIServer) CreateAddress(ctx context.Context, in *pb.CreateAddressReque
 }
 
 func (s *APIServer) GetAddresses(ctx context.Context, in *pb.GetAddressesRequest) (*pb.GetAddressesResponse, error) {
-	logging.CPrint(logging.INFO, "api: GetAddresses", logging.LogFormat{"version": in.Version})
+	logging.CPrint(logging.INFO, "api: GetAddresses", logging.LogFormat{"version": in.Version, "P": in.P})
 	addressClass := uint16(in.Version)
+
 	if !massutil.IsValidAddressClass(addressClass) {
 		logging.CPrint(logging.ERROR, ErrCode[ErrAPIInvalidVersion], logging.LogFormat{
 			"version": in.Version,

@@ -90,8 +90,16 @@ out:
 			//vm, err := txscript.NewEngine(pkScript, txVI.tx.MsgTx(),
 			//	txVI.txInIndex, v.flags, v.sigCache)
 			vm, err := txscript.NewEngine(pkScript, txVI.tx.MsgTx(),
-				txVI.txInIndex, v.flags, v.sigCache, txVI.sigHashes,
+				txVI.txInIndex, v.flags, nil, txVI.sigHashes,
 				inputAmount)
+			//logging.CPrint(logging.ERROR, "verofu 1", logging.LogFormat{
+			//	"pkscript": pkScript,
+			//	"tx": tx,
+			//	"i": i,
+			//	"txscript.StandardVerifyFlags": txscript.StandardVerifyFlags,
+			//	"hashCache": hashCache,
+			//	"txouts[i].Value": txouts[i].Value,
+			//})
 			if err != nil {
 				logging.CPrint(logging.ERROR, "failed to construct vm engine",
 					logging.LogFormat{"transaction": txVI.tx.Hash(), "index": txVI.txInIndex, "previousOutPoint": txIn.PreviousOutPoint,
@@ -102,6 +110,13 @@ out:
 
 			// Execute the script pair.
 			if err := vm.Execute(); err != nil {
+				logging.CPrint(logging.ERROR, "verofu 1", logging.LogFormat{
+					"pkscript": pkScript,
+					"tx": txVI.tx,
+						"i": txVI.txInIndex,
+					"txscript.StandardVerifyFlags": txscript.StandardVerifyFlags,
+					"txouts[i].Value": inputAmount,
+				})
 				logging.CPrint(logging.ERROR, "failed to validate signature",
 					logging.LogFormat{"transaction": txVI.tx.Hash(), "index": txVI.txInIndex, "previousOutPoint": txIn.PreviousOutPoint,
 						"input witness": witness, "reference pkScript": pkScript, "err": err})

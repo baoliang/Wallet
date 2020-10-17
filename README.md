@@ -6,7 +6,7 @@ A wallet implementation of [MassNet](http://www.massnet.org/) in Golang.
 
 ## Requirements
 
-  [Go](http://golang.org) 1.11 or newer.
+  [Go](http://golang.org) 1.13 or newer.
 
 ## Development
 
@@ -16,12 +16,15 @@ A wallet implementation of [MassNet](http://www.massnet.org/) in Golang.
 
 - Clone source code to `$GOPATH/src/github.com/mass-community/MassNet-wallet`.
 - Build the program.
-  ```bash
-  cd $GOPATH/src/github.com/mass-community/MassNet-wallet
-  make build
-  ```
+    ```bash
+    cd $GOPATH/src/github.com/mass-community/MassNet-wallet
+    make build
+    ```
 - Run `./bin/masswallet` to start.
-go build -o bin/masswallet-cli cmd/masswalletcli/main.go
+    ```bash 
+    go build -o bin/masswallet-cli cmd/masswalletcli/main.go
+    ```
+
 #### Windows
 
 - Clone source code to `$GOPATH/src/github.com/mass-community/MassNet-wallet`.
@@ -37,9 +40,9 @@ go build -o bin/masswallet-cli cmd/masswalletcli/main.go
 
 #### Prerequisites
 
-- Install [Golang](http://golang.org) 1.11 or newer.
+- Install [Golang](http://golang.org) 1.13 or newer.
 - Install the specific version or [ProtoBuf](https://developers.google.com/protocol-buffers), and related `protoc-*`:
-  ```
+  ```bash
   # libprotoc
   libprotoc 3.6.1
   

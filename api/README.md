@@ -48,6 +48,17 @@ Alternatively, check `./api/proto/api.swagger.json` directly for full definition
 
 ## Develop
 
+Install go package
+
+```bash
+go get -u "google.golang.org/grpc"
+go get -u "google.golang.org/grpc/reflection"
+go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+go get -u github.com/golang/protobuf/protoc-gen-go
+```
+
+
 Structure of the `./api/proto` directory,
 
 ```c

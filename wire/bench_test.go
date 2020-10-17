@@ -26,6 +26,7 @@ var tstGenesisCoinbaseTx = MsgTx{
 		{
 			Value:    0x47868c000,
 			PkScript: mustDecodeString("0020ba60494593fe65bea35fe9e118c129e5478ce660cec07c8ea8a7e2ec841fccd2"),
+
 		},
 	},
 	LockTime: 0,
