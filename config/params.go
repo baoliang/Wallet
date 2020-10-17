@@ -127,7 +127,7 @@ var ChainParams = Params{
 
 	// Human-readable part for Bech32 encoded segwit addresses, as defined in
 	// BIP 173.
-	Bech32HRPSegwit: "ms", // always ms for main net
+	Bech32HRPSegwit: "sk", // always ms for main net
 
 	// Address encoding magics
 	PubKeyHashAddrID:        0x00, // starts with 1
