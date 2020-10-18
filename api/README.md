@@ -76,7 +76,7 @@ Structure of the `./api/proto` directory,
   - Adding API endpoints in `service.rpc`
   - Adding `Route`, `Method` etc. in `service.rpc.option`
   - Adding structure of request and response in `message`
-- In `api_service.go` devlop the handler of the new API. Take care of parameter validation and error handling. New member variables may be added in `server` structure in `server.go`.
+- In `api_service.go` develop the handler of the new API. Take care of parameter validation and error handling. New member variables may be added in `server` structure in `server.go`.
 - Run the following script to generate `api.pb.go` and `api.pg.gw.go` source codes into `./api/proto`.
 
 ```bash
