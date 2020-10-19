@@ -1211,7 +1211,6 @@ type CreateRawTransactionRequest struct {
 type CreateSigRawTransactionRequest struct {
 	Inputs   []*TransactionInput `protobuf:"bytes,1,rep,name=inputs" json:"inputs,omitempty"`
 	Amounts  map[string]string   `protobuf:"bytes,2,rep,name=amounts" json:"amounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	LockTime uint64              `protobuf:"varint,3,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
 	P   string                 `protobuf:"bytes,3,opt,name=p,json=p,proto3" json:"p,omitempty"`
 	Txouts   []*TransactionOutput  `protobuf:"bytes,4,rep,name=txouts" json:"txouts,omitempty"`
 
@@ -1263,12 +1262,7 @@ func (m *CreateSigRawTransactionRequest) GetAmounts() map[string]string {
 	return nil
 }
 
-func (m *CreateSigRawTransactionRequest) GetLockTime() uint64 {
-	if m != nil {
-		return m.LockTime
-	}
-	return 0
-}
+
 
 type AutoCreateTransactionRequest struct {
 	Amounts     map[string]string `protobuf:"bytes,1,rep,name=amounts" json:"amounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`

@@ -588,12 +588,12 @@ message GetTxStatusResponse {
     string status = 2;
 }
 
-message CreateSigRawTransactionRequest {
+message CreateSigRawTransactionRequest
+{
        repeated TransactionInput inputs = 1;
        map <string, string> amounts = 2;
-       uint64 lock_time = 3;
-       string p    = 4;
-       repeated TransactionOutput  txouts  =5;
+       string p    = 3;
+       repeated TransactionOutput  txouts  =4;
 }
 message SignRawTransactionRequest {
     string raw_tx = 1;
