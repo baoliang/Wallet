@@ -10,10 +10,10 @@ require (
 	github.com/facebookgo/stack v0.0.0-20160209184415-751773369052 // indirect
 	github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870 // indirect
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
-	github.com/gogo/protobuf v1.2.1
+	github.com/gogo/protobuf v1.3.1
 	github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6
-	github.com/golang/protobuf v1.3.2
-	github.com/grpc-ecosystem/grpc-gateway v1.9.6
+	github.com/golang/protobuf v1.4.2
+	github.com/grpc-ecosystem/grpc-gateway v1.15.0
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
 	github.com/lestrrat/go-envload v0.0.0-20180220120943-6ed08b54a570 // indirect
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
@@ -32,9 +32,10 @@ require (
 	github.com/tebeka/strftime v0.1.3 // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20190705090504-162552197222
 	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
-	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
-	google.golang.org/genproto v0.0.0-20190817000702-55e96fffbd48
-	google.golang.org/grpc v1.23.0
+	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0
+	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
+	google.golang.org/grpc v1.32.0
+	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/fatih/set.v0 v0.2.1
 	gopkg.in/karalabe/cookiejar.v2 v2.0.0-20150724131613-8dcd6a7f4951
 )
