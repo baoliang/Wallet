@@ -2511,6 +2511,8 @@ func init() {
 	proto.RegisterType((*TxHistoryRequest)(nil), "rpcprotobuf.TxHistoryRequest")
 	proto.RegisterType((*TransactionInput)(nil), "rpcprotobuf.TransactionInput")
 	proto.RegisterType((*CreateRawTransactionRequest)(nil), "rpcprotobuf.CreateRawTransactionRequest")
+	proto.RegisterType((*CreateSigRawTransactionRequest)(nil), "rpcprotobuf.CreateSigRawTransactionRequest")
+
 	proto.RegisterType((*AutoCreateTransactionRequest)(nil), "rpcprotobuf.AutoCreateTransactionRequest")
 	proto.RegisterType((*CreateRawTransactionResponse)(nil), "rpcprotobuf.CreateRawTransactionResponse")
 	proto.RegisterType((*CreateStakingTransactionRequest)(nil), "rpcprotobuf.CreateStakingTransactionRequest")
