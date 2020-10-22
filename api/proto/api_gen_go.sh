@@ -3,19 +3,19 @@
 # See README.md for details
 
 protoc -I ./api/proto \
-    -I $GOPATH/pkg/mode/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
-    -I $GOPATH/pkg/mode/github.com/grpc-ecosystem/grpc-gateway \
-    --go_out=plugins=grpc:. \
+    -I $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.15.0/third_party/googleapis \
+    -I $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.15.0 \
+    --go_out=plugins=grpc:./api/proto \
     ./api/proto/api.proto
 
 protoc -I ./api/proto \
-    -I $GOPATH/pkg/mode/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
-    -I $GOPATH/pkg/mode/github.com/grpc-ecosystem/grpc-gateway \
-    --grpc-gateway_out=logtostderr=true:. \
+    -I $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.15.0/third_party/googleapis \
+    -I $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.15.0 \
+    --grpc-gateway_out=logtostderr=true:./api/proto \
     ./api/proto/api.proto
 
-protoc -I $GOPATH/src/massnet.org/mass-wallet/api/proto \
-    -I $GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
-    -I $GOPATH/src/github.com/grpc-ecosystem/grpc-gateway \
-    --swagger_out=logtostderr=true:. \
-    $GOPATH/src/massnet.org/mass-wallet/api/proto/api.proto
+protoc -I ./api/proto \
+    -I $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.15.0/third_party/googleapis \
+    -I $GOPATH/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.15.0 \
+    --swagger_out=logtostderr=true:./api/proto \
+    ./api/proto/api.proto

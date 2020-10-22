@@ -135,8 +135,6 @@ service ApiService {
     rpc GetAddresses (GetAddressesRequest) returns (GetAddressesResponse){
         option (google.api.http) = {
               get: "/v1/addresses/{version}"
-              post: "/v1/addresses/{version}"
-
         };
     }
     // if addresses not provided, return balances of all addresses

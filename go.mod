@@ -12,8 +12,8 @@ require (
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6
-	github.com/golang/protobuf v1.4.2
-	github.com/grpc-ecosystem/grpc-gateway v1.15.0
+	github.com/golang/protobuf v1.4.3
+	github.com/grpc-ecosystem/grpc-gateway v1.15.2
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
 	github.com/lestrrat/go-envload v0.0.0-20180220120943-6ed08b54a570 // indirect
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
@@ -31,13 +31,15 @@ require (
 	github.com/syndtr/goleveldb v1.0.1-0.20190318030020-c3a204f8e965
 	github.com/tebeka/strftime v0.1.3 // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20190705090504-162552197222
-	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
-	golang.org/x/net v0.0.0-20191002035440-2ec189313ef0
-	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
-	google.golang.org/grpc v1.32.0
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974
+	golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a // indirect
+	google.golang.org/genproto v0.0.0-20201021134325-0d71844de594
+	google.golang.org/grpc v1.33.1
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/fatih/set.v0 v0.2.1
 	gopkg.in/karalabe/cookiejar.v2 v2.0.0-20150724131613-8dcd6a7f4951
+	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
 
 replace massnet.org/mass-wallet => ./
