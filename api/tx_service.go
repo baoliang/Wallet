@@ -424,7 +424,7 @@ func (s *APIServer) CreateRawTransaction(ctx context.Context, in *pb.CreateRawTr
 		amounts[addr] = val
 	}
 
-	mtxHex, err := s.massWallet.CreateRawTransaction(inputs, amounts, in.LockTime, in.Public)
+	mtxHex, err := s.massWallet.CreateRawTransaction(inputs, amounts, in.LockTime, true)
 	if err != nil {
 		logging.CPrint(logging.ERROR, "CreateRawTransaction failed", logging.LogFormat{"err": err})
 		cvtErr := convertResponseError(err)

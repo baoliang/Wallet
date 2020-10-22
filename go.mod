@@ -36,7 +36,7 @@ require (
 	golang.org/x/sys v0.0.0-20201020230747-6e5568b54d1a // indirect
 	google.golang.org/genproto v0.0.0-20201021134325-0d71844de594
 	google.golang.org/grpc v1.33.1
-	google.golang.org/protobuf v1.25.0 // indirect
+	google.golang.org/protobuf v1.25.0
 	gopkg.in/fatih/set.v0 v0.2.1
 	gopkg.in/karalabe/cookiejar.v2 v2.0.0-20150724131613-8dcd6a7f4951
 	gopkg.in/yaml.v2 v2.3.0 // indirect

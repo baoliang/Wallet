@@ -214,13 +214,13 @@ func (s *APIServer) CreateSigRawTransaction(ctx context.Context, in *pb.CreateSi
 
 	var txouts []wire.TxOut
 	for _, out := range in.Txouts {
-		pkscript, err := hex.DecodeString(out.PkScript)
+		pkscript, err := hex.DecodeString(out.Pkscript)
 		if err != nil {
 			st := status.New(ErrAPIInvalidTxHex, ErrCode[ErrAPIInvalidTxHex])
 			return nil, st.Err()
 		}
 		txouts = append(txouts, wire.TxOut{
-			Value:    out.Value,
+			Value:    int64(out.Value),
 			PkScript: pkscript,
 		})
 	}
