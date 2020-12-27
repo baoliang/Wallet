@@ -569,13 +569,14 @@ func (s *APIServer) GetStakingHistory(ctx context.Context, in *empty.Empty) (*pb
 func (s *APIServer) CreateAddress(ctx context.Context, in *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
 	logging.CPrint(logging.INFO, "api: CreateAddress", logging.LogFormat{"version": in.Version})
 	if len(in.P) > 0 {
-		// wif : wallet-import-format.
-		wif, err := btcutil.DecodeWIF(in.P)
+
+		pkscript, err := hex.DecodeString(in.P)
+		var pubs []*btcec.PublicKey
+		pubKey, err := btcec.ParsePubKey(pkscript, btcec.S256())
 		if err != nil {
 			fmt.Println(err)
 		}
-		var pubs []*btcec.PublicKey
-		pubs = append(pubs, wif.PrivKey.PubKey())
+		pubs = append(pubs, pubKey)
 		_, add, err := keystore.NewNonPersistentWitSAddrForBtcec(pubs, 1, massutil.AddressClassWitnessV0, &config.ChainParams)
 		fmt.Println(add.EncodeAddress())
 		details := make([]*pb.GetAddressesResponse_AddressDetail, 0)

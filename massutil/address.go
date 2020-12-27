@@ -432,6 +432,7 @@ type AddressPubKey struct {
 	pubKeyHashID byte
 }
 
+
 // NewAddressPubKey returns a new AddressPubKey which represents a pay-to-pubkey
 // address.  The serializedPubKey parameter must be a valid pubkey and can be
 // uncompressed, compressed, or hybrid.

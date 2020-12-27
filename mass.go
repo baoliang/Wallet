@@ -12,7 +12,6 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"path/filepath"
-	"runtime"
 	"runtime/pprof"
 
 	"massnet.org/mass-wallet/config"
@@ -21,7 +20,6 @@ import (
 	"massnet.org/mass-wallet/database/storage"
 	_ "massnet.org/mass-wallet/database/storage/ldbstorage"
 	_ "massnet.org/mass-wallet/database/storage/rdbstorage"
-	"massnet.org/mass-wallet/limits"
 	"massnet.org/mass-wallet/logging"
 	"massnet.org/mass-wallet/massutil"
 	_ "massnet.org/mass-wallet/masswallet/db/ldb"
@@ -145,36 +143,36 @@ func massMain(serverChan chan<- *server) error {
 	return nil
 }
 
-func main() {
-	// Use all processor cores.
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	// Up some limits.
-	if err := limits.SetLimits(); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to set limits: %v\n", err)
-		os.Exit(1)
-	}
-
-	// Call serviceMain on Windows to handle running as a service.  When
-	// the return isService flag is true, exit now since we ran as a
-	// service.  Otherwise, just fall through to normal operation.
-	if runtime.GOOS == "windows" {
-		isService, err := winServiceMain()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		if isService {
-			os.Exit(0)
-		}
-	}
-
-	// Work around defer not working after os.Exit()
-	if err := massMain(nil); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
+//func main() {
+//	// Use all processor cores.
+//	runtime.GOMAXPROCS(runtime.NumCPU())
+//
+//	// Up some limits.
+//	if err := limits.SetLimits(); err != nil {
+//		fmt.Fprintf(os.Stderr, "failed to set limits: %v\n", err)
+//		os.Exit(1)
+//	}
+//
+//	// Call serviceMain on Windows to handle running as a service.  When
+//	// the return isService flag is true, exit now since we ran as a
+//	// service.  Otherwise, just fall through to normal operation.
+//	if runtime.GOOS == "windows" {
+//		isService, err := winServiceMain()
+//		if err != nil {
+//			fmt.Println(err)
+//			os.Exit(1)
+//		}
+//		if isService {
+//			os.Exit(0)
+//		}
+//	}
+//
+//	// Work around defer not working after os.Exit()
+//	if err := massMain(nil); err != nil {
+//		fmt.Println(err)
+//		os.Exit(1)
+//	}
+//}
 
 // blockDbNamePrefix is the prefix for the block database name.  The
 // database type is appended to this value to form the full block
